@@ -268,8 +268,8 @@ public class taller0 {
 		if (saldos[indi_a_usar] < precio_x_unidad[indi_producto][indi_tiendas]) {
 			StdOut.println("El saldo es insuficiente para realizar la compra");
 		}
-		else if(saldos[indi_a_usar] > precio_x_unidad[indi_producto][indi_tiendas]) {
-			// aÒadir producto al inventario de usuario 
+		else if(saldos[indi_a_usar] >= precio_x_unidad[indi_producto][indi_tiendas]) {
+			// a√±adir producto al inventario de usuario 
 			for(int b = 0; b <1000; b++) {
 				if (inventario[b][indi_a_usar] == null) {
 					inventario[b][indi_a_usar] = producto_a_comprar;
