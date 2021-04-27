@@ -25,7 +25,7 @@ public class taller0 {
 		String[] mangas = new String[1000];
 		String[] comics = new String[1000];
 		int[][] inventario_tiendas = new int [1000][1000]; //stock por tienda
-		int[][] precio_x_unidad = new int[1000][1000]; // precio por unidad por tienda
+		int[] precio_x_unidad = new int[1000]; // precio por unidad por tienda
 		String[] productos = new String[1000];
 		
 		Leer1(nombre_completo,ruts,contrasenas,saldos,inventario);
@@ -122,11 +122,11 @@ public class taller0 {
 				}
 			}
 			inventario_tiendas[indi_productos][indi_tiendas] += total_producto;
-			precio_x_unidad[indi_productos][indi_tiendas] += valor_por_unidad;
+			precio_x_unidad[indi_productos] += valor_por_unidad;
 		}
 	}
 	// Leer3 is uncompleted
-	public static void IniciarSesion(String[]nombre_completo,String[]ruts,String[]contrasenas,int[]saldos,String[][]inventario,int[][]inventario_tiendas,String[]productos,String[]tiendas,int[][]precio_x_unidad) {
+	public static void IniciarSesion(String[]nombre_completo,String[]ruts,String[]contrasenas,int[]saldos,String[][]inventario,int[][]inventario_tiendas,String[]productos,String[]tiendas,int[]precio_x_unidad) {
 		boolean error = true;
 		StdOut.println("-----------------------------");
 		StdOut.println("    Bienvenido al Sistema");
@@ -283,6 +283,79 @@ public class taller0 {
 			// Mensaje de que la compra se realizo con exito
 			StdOut.println("La compra se realizo con exito");
 		}
+		
+		
+	}
+	public static void MenuAdmin(String[] nombres, String [] ruts,int [] saldos, String [] tiendas, String[] productos, int [] recaudado, int[][] inventario, int [][] Stocks, int[] precios) {
+		StdOut.println("a) Agregar stock");
+		StdOut.println("b) Informacion de recaudacion");
+		StdOut.println("c) Informacion compradores");
+		StdOut.println("d) Comic vs Manga");
+		String Opcion = StdIn.readString();
+		if(Opcion.equals("a")) {
+			for(int i = 0; i<tiendas.length; i++) {		//despliega la lista de tiendas
+				StdOut.println(tiendas[i]);
+			}
+			StdOut.println("Ingrese la tienda");
+			String TiendaElegida = StdIn.readString();	
+			int i = busqueda(TiendaElegida, tiendas);
+			StdOut.println("Stock: ");
+			for(int j = 0; j<productos.length; j++) {
+				StdOut.println(productos[j] + Stocks[i][j]);	//despliega la lista de productos y su stock
+			}
+			StdOut.println("Ingrese el producto");
+			String ProductoElegido = StdIn.readString();
+			int k = busqueda(ProductoElegido, productos);
+			StdOut.println("Stock a agregar:");
+			int StockSumado = StdIn.readInt();
+			Stocks[i][k] += StockSumado;				//agrega stock
+			StdOut.println("Stock agregado exitosamente");
+			
+		}
+		if(Opcion.equals("b")) {
+			int suma = 0;
+			for(int i = 0; i<tiendas.length; i++) {
+				StdOut.println(tiendas[i] + recaudado[i]);	//despliega las tiendas y su respectiva recaudacion
+				suma += recaudado[i];
+			}
+			StdOut.println("Total de la empresa: " + suma);
+		}
+		if(Opcion.equals("c")) {
+			int mayor = 0;
+			int indicemayor = 0;
+			int menor = 999999999999;
+			int indicemenor = 0;
+			for(int i = 0; i<nombres.length(); i++){
+				int suma = 0;
+				for(int j = 0; j<productos.length(); j++){
+					int indice_precio = busqueda(inventario[j][i], productos);
+					suma += precios[indice_precio];
+				}
+				if(suma>mayor){
+					mayor = suma;
+					indicemayor = i;
+				}
+				if(suma<menor){
+					menor = suma;
+					indicemenor = i;
+				}
+					
+			}
+			StdOut.println("La persona que adquirió mas productos es: " + nombres[indicemayor] + "Rut: " + ruts[indicemayor] + "Saldo: " + 
+				       saldos[indicemayor]);
+			StdOut.println("Con una suma de: " + mayor);
+			StdOut.println("La persona que adquirió menos productos es: " + nombres[indicemenor] + "Rut: " + ruts[indicemenor] + "Saldo: " + 
+				       saldos[indicemenor]);
+			StdOut.println("Con una suma de: " + menor);
+		}
+		if(Opcion.equals("d")) {
+			//comic vs manga
+		}
+		else {
+			
+		}
+		
+		
 		
 	}
 }
