@@ -1,6 +1,7 @@
-package paquete;
+package taller0;
 
 import java.io.IOException;
+import java.util.Scanner;
 
 import ucn.*;
 
@@ -19,6 +20,7 @@ public class Tallerv3 {
 		 *  Arrays for tiendas.txt
 		 */
 		String[] tiendas = new String[1000];
+		String[] tiendas_sin_espacio = new String[1000];
 		int[] total_por_tienda = new int[1000];
 		/*
 		 * Arrays for productos.txt
@@ -33,8 +35,9 @@ public class Tallerv3 {
 		Leer2(tiendas,total_por_tienda);
 		Leer3(mangas,comics,inventario_tiendas,productos,tiendas,precio_x_unidad);
 		
+
 		IniciarSesion(nombre_completo,ruts,contrasenas,saldos,inventario,inventario_tiendas,productos,tiendas,precio_x_unidad, total_por_tienda);
-		
+		StdOut.println(inventario_tiendas[0][0]);
 	}
 
 	public static void Leer1(String[]nombre_completo,String[]ruts,String[]contrasenas,int[]saldos,String[][]inventario) throws IOException {
@@ -85,7 +88,7 @@ public class Tallerv3 {
 			
 			tiendas[indi] = tienda;
 			total_por_tienda[indi] = monto_recaudado;
-			
+		
 			indi++;
 			
 		}
@@ -137,7 +140,7 @@ public class Tallerv3 {
 				if(busqueda(rut_definitivo, ruts) != -1 && busqueda(ContraIngresada, contras) != -1) {
 					MenuUsuario(rut_definitivo,nombre_completo,ruts,saldos,inventario,inventario_tiendas,productos,tiendas,precio_x_unidad);
 				}
-				else if(rut_definitivo == "ADMIN" && ContraIngresada == "ADMIN"){
+				else if(rut_definitivo.equals("ADMIN") && ContraIngresada.equals("ADMIN")){
 					MenuAdmin(nombre_completo, ruts, saldos, tiendas, productos, total_por_tienda, inventario, inventario_tiendas, precio_x_unidad);
 				}
 				else{
@@ -148,13 +151,14 @@ public class Tallerv3 {
 			StdOut.println("Ingrese el rut");
 			RutIngresado = StdIn.readString();
 			StdOut.println("Ingrese la contraseña");
-			ContraIngresada = StdIn.readString();	
-			
+			ContraIngresada = StdIn.readString();
+			rut1 = RutIngresado.replace(".", "");
+			rut_definitivo = rut1.replace("-", "");
 		}
 
 	}
 	
-	public static void MenuUsuario(String rut_usuario,String[]nombre_completo,String[]ruts,int[]saldos,String[][]inventario,int[][]inventario_tiendas,String[]productos,String[]tiendas,int[]precio_x_unidad ) {
+	public static void MenuUsuario(String rut_usuario,String[]nombre_completo,String[]ruts,int[]saldos,String[][]inventario,int[][]inventario_tiendas,String[]productos,String[]tiendas,int[]precio_x_unidad) {
 		int indi_a_usar = 0;
 		for (int i = 0; i < 1000; i++) {
 			if (ruts[i].equals(rut_usuario)) {
@@ -181,37 +185,30 @@ public class Tallerv3 {
 		StdOut.println("c) Comprar producto: ");
 		
 	
-		int indi_tiendas = 0;
-		for(int i = 0; i<3;i++) {		//Agregar un try para los null
-			StdOut.println(tiendas[i]);
+		for(int i = 0; i<1000;i++) {		//Agregar un try para los null
+			if (tiendas[i] != null) {
+				StdOut.println(tiendas[i]);
+			}	
 		}
 		StdOut.println("En que tienda desea comprar: ");
-		String tienda_a_comprar = StdIn.readString();
+		Scanner sc = new Scanner(System.in);
+		String tienda_a_comprar = sc.nextLine();
 		StdOut.println(tienda_a_comprar);
-		indi_tiendas = busqueda(tienda_a_comprar, tiendas);
+		int indi_tiendas = busqueda(tienda_a_comprar, tiendas);
 		StdOut.println("Listado de " + tiendas[indi_tiendas]);
 		for(int l = 0; l <productos.length; l++) {
 			if (inventario_tiendas[l][indi_tiendas] != 0) {
-				StdOut.println("Nombre producto: " 
-			+ productos[l] 
-					+ "| Stock del producto: " 
-			+ inventario_tiendas[l][indi_tiendas] + " | Precio por unidad del producto: " + precio_x_unidad[l]);
-	
+				StdOut.println("Nombre producto: " + productos[l] + "| Stock del producto: " + inventario_tiendas[l][indi_tiendas] + " | Precio por unidad del producto: " + precio_x_unidad[l]);	
 			}
 		}
 		StdOut.println("Ingrese el nombre del producto que desea comprar: ");
-		String producto_a_comprar = StdIn.readString();
-		int indi_producto = 0;
-		for (int a = 0; a < 1000; a++) {
-			try {
-			if (productos[a].equals(producto_a_comprar)) {
-				indi_producto = a;
-				break;
-			}
-			}catch(Exception e) {}
-		}
+		String producto_a_comprar = sc.nextLine();
+		int indi_producto = busqueda(producto_a_comprar,productos);
 		
-		if (saldos[indi_a_usar] < precio_x_unidad[indi_producto]) {
+		if (indi_producto == -1) {
+			StdOut.println("El producto fue mal ingresado");
+		}
+		else if (saldos[indi_a_usar] < precio_x_unidad[indi_producto]) {
 			StdOut.println("El saldo es insuficiente para realizar la compra");
 		}
 		else if(saldos[indi_a_usar] >= precio_x_unidad[indi_producto]) {
@@ -238,19 +235,24 @@ public class Tallerv3 {
 		StdOut.println("c) Informacion compradores");
 		StdOut.println("d) Comic vs Manga");
 		String Opcion = StdIn.readString();
+		Scanner sc = new Scanner(System.in);
 		if(Opcion.equals("a")) {
-			for(int i = 0; i<tiendas.length; i++) {		//despliega la lista de tiendas
-				StdOut.println(tiendas[i]);
+			for(int i = 0; i<tiendas.length; i++) {	//despliega la lista de tiendas
+				if (tiendas[i] != null) {
+					StdOut.println(tiendas[i]);
+				}
 			}
 			StdOut.println("Ingrese la tienda");
-			String TiendaElegida = StdIn.readString();	
+			String TiendaElegida = sc.nextLine();	
 			int i = busqueda(TiendaElegida, tiendas);
 			StdOut.println("Stock: ");
 			for(int j = 0; j<productos.length; j++) {
-				StdOut.println(productos[j] + Stocks[i][j]);	//despliega la lista de productos y su stock
+				if (Stocks[j][i] > 0 ) {
+					StdOut.println(productos[j] + " " + Stocks[j][i]);	//despliega la lista de productos y su stock
+				}
 			}
 			StdOut.println("Ingrese el producto");
-			String ProductoElegido = StdIn.readString();
+			String ProductoElegido = sc.nextLine();
 			int k = busqueda(ProductoElegido, productos);
 			StdOut.println("Stock a agregar:");
 			int StockSumado = StdIn.readInt();
@@ -261,8 +263,10 @@ public class Tallerv3 {
 		if(Opcion.equals("b")) {
 			int suma = 0;
 			for(int i = 0; i<tiendas.length; i++) {
-				StdOut.println(tiendas[i] + recaudado[i]);	//despliega las tiendas y su respectiva recaudacion
-				suma += recaudado[i];
+				if (tiendas[i] != null) {
+					StdOut.println(tiendas[i] + recaudado[i]);	//despliega las tiendas y su respectiva recaudacion
+					suma += recaudado[i];
+				}
 			}
 			StdOut.println("Total de la empresa: " + suma);
 		}
@@ -274,8 +278,10 @@ public class Tallerv3 {
 			for(int i = 0; i<nombres.length; i++){
 				int suma = 0;
 				for(int j = 0; j<productos.length; j++){
+				
 					int indice_precio = busqueda(inventario[j][i], productos);
 					suma += precios[indice_precio];
+					
 				}
 				if(suma>mayor){
 					mayor = suma;
